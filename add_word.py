@@ -5,7 +5,7 @@ import sys,os,setings
 
 
 
-class menu_içerik(QWidget):
+class ADD_WORLD(QWidget):
     def __init__(self):
         super().__init__()
         self.etiketler()
@@ -31,6 +31,7 @@ class menu_içerik(QWidget):
         self.save.setFont(QFont("Ariel", 10))
 
         ###############################################  the button for world control
+
         self.DEL = QPushButton(self)
         self.DEL.setText("DEL")
         self.DEL.setFont(QFont("Ariel", 10))
@@ -68,15 +69,35 @@ class menu_içerik(QWidget):
 
         h = QHBoxLayout()
         h.addStretch()
-        h.addWidget(self.save)
-        h.addStretch()
-        h.addStretch()
         h.addWidget(self.DEL)
+        h.addStretch()
+        h.addStretch()
+        h.addWidget(self.save)
         h.addStretch()
 
         v.addLayout(h)
         v.addStretch()
 
+
+
+
+        self.save.clicked.connect(self.word_save)
+
         self.setLayout(v)
+
+    def word_save(self):
+        word=self.new_v.text()+":"+self.meaning_v.text()+"\n"
+
+        print(word)
+        self.new_v.clear()
+        self.meaning_v.clear()
+
+        with open("word_library.dbs","a+") as file:
+
+
+            file.write(word.upper())
+
+
+
 
 

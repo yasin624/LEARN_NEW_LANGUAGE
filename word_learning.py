@@ -9,8 +9,10 @@ class setup(QMainWindow):
     def __init__(self):
         super().__init__()
         ##########################################################  table
-        self.WORD = add_word.menu_içerik()
+        self.WORD = add_word.ADD_WORLD()
+        self.WORD.__init__()
         self.main_m = main_menu.menu_içerik()
+        self.main_m.__init__()
         ######################################################  setup settings
         self.setWindowTitle("WORD LEARNİNG ")
         self.setWindowIcon(QIcon("logo.ico"))
