@@ -13,6 +13,12 @@ class menu_içerik(QWidget):
     def __init__(self):
         super().__init__()
 
+        #########################################  main setting
+        self.setWindowTitle("LOCK LEARNİNG ")
+        self.setWindowIcon(QIcon("logo.ico"))
+        self.setStyleSheet("background-color:#516BEB;")
+        self.setMaximumSize(500,200)
+        self.setMinimumSize(500,200)
 
         self.word_list=self.word_list_upload()
         self.now_word=0
@@ -37,6 +43,8 @@ class menu_içerik(QWidget):
         self.meaning.setFont(QFont("Ariel", 10))
         self.meaning.setStyleSheet('background: white;')
         self.meaning.setFocusPolicy(Qt.NoFocus)
+        self.meaning.setMaximumSize(190,100)
+        self.meaning.setMaximumSize(190,100)
 
         ###############################################   this is meaning of word
         self.value = QLabel(self)
@@ -47,6 +55,8 @@ class menu_içerik(QWidget):
         self.url = QLineEdit(self)
         self.url.setFont(QFont("Ariel", 12))
         self.url.setStyleSheet('background: white;')
+        self.url.setMaximumSize(300,30)
+        self.url.setMaximumSize(300,30)
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
         self.git.setText("After")
@@ -54,64 +64,51 @@ class menu_içerik(QWidget):
 
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
-        self.before.setText("Before")
+        self.before.setText("I don't")
         self.before.setFont(QFont("Ariel", 10))
 
         ###############################################   arrangement
         self.clean_main()
 
         v = QVBoxLayout()
-        l=QHBoxLayout()
-        l.addStretch()
-        l.addWidget(QLabel("<h1><i> LEARNİNG NEW LANGUAGE </i></h1>"))
-        l.addStretch()
-        v.addLayout(l)
-        v.addStretch()
 
         k=QHBoxLayout()
         k.addStretch()
         k.addWidget(self.yazı)
         k.addStretch()
+        k.addStretch()
+        k.addStretch()
+        k.addWidget(self.before)
         v.addLayout(k)
-        v.addStretch()
 
         label=QHBoxLayout()
-        label.addStretch()
         label.addWidget(self.url)
+        label.addStretch()
+        label.addWidget(self.value)
+        label.addStretch()
+        label.addStretch()
         label.addStretch()
         v.addLayout(label)
         v.addStretch()
 
         value=QHBoxLayout()
         value.addStretch()
-        value.addWidget(self.value)
         value.addStretch()
 
         v.addLayout(value)
         v.addStretch()
 
         meaning=QHBoxLayout()
-        meaning.addStretch()
         meaning.addWidget(self.meaning)
         meaning.addStretch()
+        meaning.addStretch()
+        meaning.addWidget(self.git)
 
         v.addLayout(meaning)
         v.addStretch()
 
 
 
-
-        h = QHBoxLayout()
-        h.addStretch()
-        h.addWidget(self.before)
-        h.addStretch()
-        h.addStretch()
-        h.addWidget(self.git)
-        h.addStretch()
-
-
-        v.addLayout(h)
-        v.addStretch()
 
         self.git.clicked.connect(self.after_word)
         self.before.clicked.connect(self.before_word)
@@ -172,3 +169,8 @@ class menu_içerik(QWidget):
             self.value.setStyleSheet('color: green;')
         else:
             self.value.setStyleSheet('color: black;')
+
+app=QApplication(sys.argv)
+lock=menu_içerik()
+lock.show()
+sys.exit(app.exec_())
