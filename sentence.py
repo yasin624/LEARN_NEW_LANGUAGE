@@ -15,6 +15,7 @@ class menu_içerik(QWidget):
 
         self.word_list=self.word_list_upload()
         self.now_word=0
+        self.word_revers=True
         self.show_word=True
         self.etiketler()
 
@@ -25,36 +26,31 @@ class menu_içerik(QWidget):
 
     def etiketler(self):
 
-        word=self.word_list[self.now_word]
         ###############################################   word
         self.yazı = QLabel(self)
-        self.yazı.setText(word.split(":")[0])
         self.yazı.setFont(QFont("BOLD", 20))
-        ###############################################   meaning of word
-        self.meaning = QTextEdit(self)
-        self.meaning.setText(word.split("(")[1])
-        self.meaning.setFont(QFont("Ariel", 10))
-        self.meaning.setStyleSheet('background: white;')
-        self.meaning.setFocusPolicy(Qt.NoFocus)
-
+        word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0]
+        self.yazı.setText(word)
         ###############################################   this is meaning of word
         self.value = QLabel(self)
         self.value.setText("")
         self.value.setFont(QFont("BOLD", 20))
-        self.value.setFocusPolicy(Qt.NoFocus)
         ###############################################   enter  the word
-        self.url = QLineEdit(self)
+        self.url = QTextEdit(self)
         self.url.setFont(QFont("Ariel", 12))
         self.url.setStyleSheet('background: white;')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
         self.git.setText("After")
         self.git.setFont(QFont("Ariel", 10))
-
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
         self.before.setText("Before")
         self.before.setFont(QFont("Ariel", 10))
+        ###############################################  the button is  for before word
+        self.reverse = QPushButton(self)
+        self.reverse.setText("reverse")
+        self.reverse.setFont(QFont("Ariel", 10))
 
         ###############################################   arrangement
         self.clean_main()
@@ -89,13 +85,6 @@ class menu_içerik(QWidget):
         v.addLayout(value)
         v.addStretch()
 
-        meaning=QHBoxLayout()
-        meaning.addStretch()
-        meaning.addWidget(self.meaning)
-        meaning.addStretch()
-
-        v.addLayout(meaning)
-        v.addStretch()
 
 
 
@@ -104,6 +93,7 @@ class menu_içerik(QWidget):
         h.addStretch()
         h.addWidget(self.before)
         h.addStretch()
+        h.addWidget(self.reverse)
         h.addStretch()
         h.addWidget(self.git)
         h.addStretch()
@@ -114,40 +104,44 @@ class menu_içerik(QWidget):
 
         self.git.clicked.connect(self.after_word)
         self.before.clicked.connect(self.before_word)
+        self.reverse.clicked.connect(self.tr_en_reverse)
 
         self.setLayout(v)
-
-    def after_word(self):
-        if self.show_word:
-            word=self.word_list[self.now_word] #.split(":")[1]
-            self.control_world(word,self.url.text())
+    def tr_en_reverse(self):
+        self.word_revers=not self.word_revers
+        self.after_word("print")
+    def after_word(self,mode=None):
+        if mode=="print":
+            word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
+            self.yazı.setText(word)
+        elif self.show_word:
+            self.control_world(self.word_list[self.now_word],self.url.toPlainText())
             self.show_word=False
+
         else:
             try:
                 self.now_word+=1
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
             except:
                 self.now_word=0
-                self.word_list=self.word_list_upload()
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
-
+            word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
+            self.yazı.setText(word)
             self.clean_main()
     def before_word(self):
+
         if self.show_word:
             word=self.word_list[self.now_word] #.split(":")[1]
-            self.control_world(word,self.url.text())
+            self.control_world(word,self.url.toPlainText())
 
 
             self.show_word=False
         else:
             try:
+
                 self.now_word-=1
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
             except:
                 self.now_word=0
-                self.word_list=self.word_list_upload()
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
-
+            word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
+            self.yazı.setText(word)
             self.clean_main()
 
 
@@ -156,18 +150,34 @@ class menu_içerik(QWidget):
     def clean_main(self):
         self.url.clear()
         self.value.clear()
-        self.meaning.clear()
         self.show_word=True
 
     def control_world(self,word,entered_word):
-        text=word.split("(")[1].replace(")","")
+        word=word.split("(")[1].replace(")","").split(":")[1 if self.word_revers else 0].split(" ")
+        entered_word=entered_word.split(" ")
+        print("#"*30)
+        print(word)
+        print(entered_word)
+        write_word=""
+        next=0
+        for i in word:
+            if i=="":
+                next-=1
+                pass
+            else:
+                try:
+                    if i.lower()==entered_word[next].lower():
+                        write_word+=f"<span style='color:green;'>{i}</span> "
+                        print("burada 1")
 
-        word=word.split("(")[0].split(":")[1].replace(" ","")
-
-        self.value.setText(word)
-        self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
-
-        if word.lower()==entered_word.lower():
-            self.value.setStyleSheet('color: green;')
-        else:
-            self.value.setStyleSheet('color: black;')
+                    elif entered_word[next].lower() in word and entered_word!="":
+                        print("burada 4",entered_word[next].lower())
+                        write_word+=f"<span style='color:blue;'>{i}</span> "
+                    else:
+                        print("burada 2",entered_word[next].lower())
+                        write_word+=f"<span style='color:black;'>{i}</span> "
+                except:
+                    print("burada 3")
+                    write_word+=f"<span style='color:black;'>{i}</span> "
+            next+=1
+        self.value.setText(write_word)

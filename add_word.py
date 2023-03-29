@@ -8,23 +8,57 @@ import sys,os,setings
 class ADD_WORLD(QWidget):
     def __init__(self):
         super().__init__()
+        self.obj_line_background="white"
         self.etiketler()
 
+    def duzen(self,obje,between=[1,3,1],*kwargs):
+
+        for i in range(len(between)):
+            for l in range(between[i]):
+                obje.addStretch()
+            try:
+                obje.addWidget(kwargs[i])
+            except:
+                pass
+        return obje
+
     def etiketler(self):
-        ###############################################   app main icon
+        ###############################################   saves new word
         self.new = QLabel(self)
         self.new.setText("New word ")
         self.new.setFont(QFont("BOLD", 12))
+        self.new.setAlignment(Qt.AlignLeft)
 
         self.new_v = QLineEdit(self)
         self.new_v.setFont(QFont("Ariel", 12))
-        ###############################################   files the url
+        self.new_v.setStyleSheet(f'background: {self.obj_line_background};')
+        ###############################################   saves meaning of new word
         self.meaning = QLabel(self)
         self.meaning.setText("Meaning")
         self.meaning.setFont(QFont("BOLD", 12))
+        self.meaning.setAlignment(Qt.AlignLeft)
 
         self.meaning_v = QLineEdit(self)
         self.meaning_v.setFont(QFont("Ariel", 12))
+        self.meaning_v.setStyleSheet(f'background: {self.obj_line_background};')
+        ###############################################   saves example of new word
+        self.example = QLabel(self)
+        self.example.setText("example  ")
+        self.example.setFont(QFont("BOLD", 12))
+        self.example.setWordWrap(True)
+
+        self.example_v = QTextEdit (self)
+        self.example_v.setFont(QFont("Ariel", 12))
+        self.example_v.setStyleSheet(f'background: {self.obj_line_background};')
+        ###############################################   saves meaning of example of new word
+        self.example_M = QLabel(self)
+        self.example_M.setText("example-M")
+        self.example_M.setFont(QFont("BOLD", 12))
+        self.example_M.setWordWrap(True)
+
+        self.example_M_v = QTextEdit (self)
+        self.example_M_v.setFont(QFont("Ariel", 12))
+        self.example_M_v.setStyleSheet(f'background: {self.obj_line_background};')
         ###############################################   the button dowloand files
         self.save = QPushButton(self)
         self.save.setText("SAVE")
@@ -46,21 +80,23 @@ class ADD_WORLD(QWidget):
         v.addStretch()
 
         word=QHBoxLayout()
-        word.addStretch()
-        word.addWidget(self.new)
-        word.addStretch()
-        word.addWidget(self.new_v)
-        word.addStretch()
+        self.duzen(word,[1,3,1],self.new,self.new_v)
         v.addLayout(word)
         v.addStretch()
 
         value=QHBoxLayout()
-        value.addStretch()
-        value.addWidget(self.meaning)
-        value.addStretch()
-        value.addWidget(self.meaning_v)
-        value.addStretch()
+        self.duzen(value,[1,3,1],self.meaning,self.meaning_v)
         v.addLayout(value)
+        v.addStretch()
+
+        example=QHBoxLayout()
+        self.duzen(example,[1,1,1],self.example,self.example_v)
+        v.addLayout(example)
+        v.addStretch()
+
+        example_M=QHBoxLayout()
+        self.duzen(example_M,[1,1,1],self.example_M,self.example_M_v)
+        v.addLayout(example_M)
         v.addStretch()
 
 
@@ -82,20 +118,22 @@ class ADD_WORLD(QWidget):
 
 
         self.save.clicked.connect(self.word_save)
+        self.DEL.clicked.connect(self.delete)
 
         self.setLayout(v)
-
-    def word_save(self):
-        word=self.new_v.text()+":"+self.meaning_v.text()+"\n"
-
-        print(word)
+    def delete(self):
         self.new_v.clear()
         self.meaning_v.clear()
+        self.example_v.clear()
+        self.example_M_v.clear()
+    def word_save(self):
+        word=self.new_v.text()+":"+self.meaning_v.text()+"("+\
+             self.example_v.toPlainText()+":"+self.example_M_v.toPlainText()+")"+"\n"
+
+        self.delete()
 
         with open("word_library.dbs","a+") as file:
-
-
-            file.write(word.upper())
+            file.write(word.lower())
 
 
 

@@ -13,9 +13,8 @@ class menu_içerik(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.translate_type="TR"
         self.word_list=self.word_list_upload()
-        self.now_word=0
-        self.show_word=True
         self.etiketler()
 
     def word_list_upload(self,src="word_library.dbs"):
@@ -24,15 +23,8 @@ class menu_içerik(QWidget):
         return words[:-1]
 
     def etiketler(self):
-
-        word=self.word_list[self.now_word]
-        ###############################################   word
-        self.yazı = QLabel(self)
-        self.yazı.setText(word.split(":")[0])
-        self.yazı.setFont(QFont("BOLD", 20))
         ###############################################   meaning of word
         self.meaning = QTextEdit(self)
-        self.meaning.setText(word.split("(")[1])
         self.meaning.setFont(QFont("Ariel", 10))
         self.meaning.setStyleSheet('background: white;')
         self.meaning.setFocusPolicy(Qt.NoFocus)
@@ -48,16 +40,15 @@ class menu_içerik(QWidget):
         self.url.setStyleSheet('background: white;')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
-        self.git.setText("After")
+        self.git.setText("Translate")
         self.git.setFont(QFont("Ariel", 10))
 
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
-        self.before.setText("Before")
+        self.before.setText("TR->EN")
         self.before.setFont(QFont("Ariel", 10))
 
         ###############################################   arrangement
-        self.clean_main()
 
         v = QVBoxLayout()
         l=QHBoxLayout()
@@ -67,12 +58,6 @@ class menu_içerik(QWidget):
         v.addLayout(l)
         v.addStretch()
 
-        k=QHBoxLayout()
-        k.addStretch()
-        k.addWidget(self.yazı)
-        k.addStretch()
-        v.addLayout(k)
-        v.addStretch()
 
         label=QHBoxLayout()
         label.addStretch()
@@ -100,72 +85,54 @@ class menu_içerik(QWidget):
 
 
 
-        h = QHBoxLayout()
-        h.addStretch()
+        h = QVBoxLayout()
         h.addWidget(self.before)
         h.addStretch()
-        h.addStretch()
         h.addWidget(self.git)
-        h.addStretch()
+
+        ort = QHBoxLayout()
+        ort.addStretch()
+        ort.addLayout(h)
+        ort.addStretch()
 
 
-        v.addLayout(h)
+        v.addLayout(ort)
         v.addStretch()
 
         self.git.clicked.connect(self.after_word)
-        self.before.clicked.connect(self.before_word)
-
+        self.before.clicked.connect(self.change)
         self.setLayout(v)
 
     def after_word(self):
-        if self.show_word:
-            word=self.word_list[self.now_word] #.split(":")[1]
-            self.control_world(word,self.url.text())
-            self.show_word=False
+        print(" burdaaaa")
+        self.control_world(self.word_list,self.url.text())
+
+
+    def change(self):
+        if self.before.text()=="TR->EN":
+            self.before.setText("EN->TR")
+            self.translate_type="EN"
         else:
-            try:
-                self.now_word+=1
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
-            except:
-                self.now_word=0
-                self.word_list=self.word_list_upload()
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
+            self.translate_type="TR"
+            self.before.setText("TR->EN")
 
-            self.clean_main()
-    def before_word(self):
-        if self.show_word:
-            word=self.word_list[self.now_word] #.split(":")[1]
-            self.control_world(word,self.url.text())
-
-
-            self.show_word=False
-        else:
-            try:
-                self.now_word-=1
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
-            except:
-                self.now_word=0
-                self.word_list=self.word_list_upload()
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
-
-            self.clean_main()
+    def control_world(self,words,entered_word):
+        print(words)
+        for word in words:
+            print("word : ",word)
+            text=word.split("(")[1].replace(")","")
+            print("text :" ,text)
+            word=word.split("(")[0].split(":")[1].replace(" ","")
 
 
 
 
-    def clean_main(self):
-        self.url.clear()
-        self.value.clear()
-        self.meaning.clear()
-        self.show_word=True
+            self.value.setText(word)
+            self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
 
-    def control_world(self,word,entered_word):
-        text=word.split("(")[1].replace(")","")
 
-        word=word.split("(")[0].split(":")[1].replace(" ","")
 
-        self.value.setText(word)
-        self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
+            break
 
         if word.lower()==entered_word.lower():
             self.value.setStyleSheet('color: green;')
