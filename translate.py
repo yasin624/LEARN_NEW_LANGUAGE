@@ -13,7 +13,8 @@ class menu_içerik(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.translate_type="TR"
+        self.translate_type="EN"
+
         self.word_list=self.word_list_upload()
         self.etiketler()
 
@@ -47,7 +48,8 @@ class menu_içerik(QWidget):
         self.before = QPushButton(self)
         self.before.setText("TR->EN")
         self.before.setFont(QFont("Ariel", 10))
-
+        ###############################################  fisrt start functions
+        self.change()
         ###############################################   arrangement
 
         v = QVBoxLayout()
@@ -104,35 +106,53 @@ class menu_içerik(QWidget):
         self.setLayout(v)
 
     def after_word(self):
-        print(" burdaaaa")
-        self.control_world(self.word_list,self.url.text())
+        self.control_world(self.word_list,self.url.text().replace(" ",""))
 
 
     def change(self):
+        before=self.url.text()
+        self.url.setText(self.value.text())
+        self.value.setText(before)
+
         if self.before.text()=="TR->EN":
             self.before.setText("EN->TR")
             self.translate_type="EN"
+            self.git.setText("TRANSLATE")
         else:
             self.translate_type="TR"
             self.before.setText("TR->EN")
+            self.git.setText("ÇEVİR")
 
     def control_world(self,words,entered_word):
-        print(words)
+
+        if self.url.text()=="":
+            return None
+
+
         for word in words:
-            print("word : ",word)
-            text=word.split("(")[1].replace(")","")
-            print("text :" ,text)
-            word=word.split("(")[0].split(":")[1].replace(" ","")
+            if self.translate_type=="EN":
+                trans=word.split("(")[0].split(":")
+                if entered_word.lower()==trans[0].lower():
+                    text=word.split("(")[1].replace(")","")
+                    self.value.setText(trans[1])
+                    self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
+                    break
+                else:
+                    self.value.setText("wrong word")
+
+            elif self.translate_type=="TR":
+                trans=word.split("(")[0].split(":")
+                if entered_word.lower()==trans[1].replace(" ","").lower():
+                    text=word.split("(")[1].replace(")","")
+                    self.value.setText(trans[0])
+                    self.meaning.setText(" "+text.split(":")[1]+"\n\n"+text.split(":")[0])
+                    break
+                else:
+                    self.value.setText("hatalı kelime")
+            else:
+                print(" dil algılanmadı")
 
 
-
-
-            self.value.setText(word)
-            self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
-
-
-
-            break
 
         if word.lower()==entered_word.lower():
             self.value.setStyleSheet('color: green;')
