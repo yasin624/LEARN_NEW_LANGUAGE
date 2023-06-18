@@ -177,9 +177,9 @@
       <list>
         <item itemvalue="Python.LOCK" />
         <item itemvalue="Python.word_learning" />
-        <item itemvalue="Python.main_menu" />
-        <item itemvalue="Python.translate" />
         <item itemvalue="Python.sentence" />
+        <item itemvalue="Python.translate" />
+        <item itemvalue="Python.main_menu" />
       </list>
     </recent_temporary>
   </component>
