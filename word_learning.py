@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,main_menu,setings,random,add_word,sentence,translate
 from LOCK import menu_içerik
-
+import parameters as prt
 
 class setup(QMainWindow):
     def __init__(self):
@@ -18,18 +18,33 @@ class setup(QMainWindow):
         self.translate = translate.menu_içerik()
         self.translate.__init__()
         self.yol_k = setings.yol()
-        ######################################################  setup settings
-        self.setWindowTitle("WORD LEARNİNG ")
-        self.setWindowIcon(QIcon("logo.ico"))
-        self.setStyleSheet("background-color:#516BEB;")
-        self.setMaximumSize(600,900)
-        self.setMinimumSize(500,700)
+
+        self.start_parametrs()
 
         ######################################################## they parameters
         self.içerik()
+    def start_parametrs(self):
+        ######################################################  setup settings
+        self.setWindowTitle("WORD LEARNİNG ")
+        self.setWindowIcon(QIcon("logo.ico"))
 
-    def içerik(self):
+
+        self.setStyleSheet(f"background-color:{prt._background};")
+
+
+
+        self.setMaximumSize(600,900)
+        self.setMinimumSize(500,700)
+        self.timer = QTimer(self)
+
+        self.lock=None
+    def tablo_make(self):
+
         #######################################################  text menu
+
+        self.timer.timeout.connect(self.activite) # zamanlayıcı bittiğinde pencereyi göster
+        self.timer.start(1000) # zamanlayıcıyı 120000 milisaniye (2 dakika) olarak başlat
+
         """
         menu=self.menuBar()
         self.dosya=menu.addMenu("file")
@@ -50,13 +65,27 @@ class setup(QMainWindow):
         self.tablo.addTab(self.tablo.tablo4, "ADD WORD")
         self.tablo.addTab(self.tablo.tablo5, "SETİNG")
 
-        self.tablo.setStyleSheet("background-color:#516BEB;")
+        # QTabBar'ı alın
+        tab_bar = self.tablo.tabBar()
+
+        # Sekmelerin düğme stilini özelleştirin
+        tab_bar.setStyleSheet("""
+            QTabBar::tab:selected { background-color: #8099E1; color: white; }
+            QTabBar::tab:!selected { background-color: #516BEB; color: white; }
+        """)
+
+        style = QStyleFactory.create("Fusion")
+        self.tablo.setStyle(style)
+        # QTabWidget'ın stil sayfasını alın
+        #self.tablo.setStyleSheet()
+
+
+    def içerik(self):
+        self.tablo_make()
         #####################################################  satatus bar (info the bar)
         self.status=QStatusBar()
         self.setStatusBar(self.status)
-        self.status.showMessage("Tüm hakları saklıdır © 2020 | yalcınyazılımcılık")
-
-
+        self.status.addWidget(QLabel(f"     Tüm hakları saklıdır © 2020 | yalcınyazılımcılık  {' '*90}"))
 
         ###################################################   full the tables
         self.tab1()
@@ -94,7 +123,9 @@ class setup(QMainWindow):
         v.addStretch()
         self.tablo.tablo5.setLayout(v)
 
-
+    def activite(self):
+        if self.isActiveWindow():
+            if "lock" in dir(self): del self.lock
     def konum_belirle(self,dene):
         # cur_index = self.tabWidget.currentIndex() tablo indexleri
         if dene.text()=="Dowland Local":
@@ -104,11 +135,9 @@ class setup(QMainWindow):
 
     def closeEvent(self, event):
         if event.type() == QEvent.Close:
-            global lock
-            lock=menu_içerik(self.yol_k.sleep_t.value(),self)
-
+            self.lock=menu_içerik(self,self.yol_k.sleep_t.text(),self.yol_k.hard.isChecked(),self.yol_k.reverse.isChecked())
             self.close()
-            lock.show()
+            self.lock.show()
 
 
 

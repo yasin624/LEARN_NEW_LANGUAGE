@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,setings
+import parameters as prt
 
 
 
@@ -35,7 +36,7 @@ class menu_içerik(QWidget):
         self.meaning = QTextEdit(self)
         self.meaning.setText(word.split("(")[1])
         self.meaning.setFont(QFont("Ariel", 10))
-        self.meaning.setStyleSheet('background: white;')
+        self.meaning.setStyleSheet(f'background: {prt._texteditcolor};')
         self.meaning.setFocusPolicy(Qt.NoFocus)
 
         ###############################################   this is meaning of word
@@ -46,17 +47,17 @@ class menu_içerik(QWidget):
         ###############################################   enter  the word
         self.url = QLineEdit(self)
         self.url.setFont(QFont("Ariel", 12))
-        self.url.setStyleSheet('background: white;')
+        self.url.setStyleSheet(f'background: {prt._lineeditcolor};')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
         self.git.setText("After")
         self.git.setFont(QFont("Ariel", 10))
-
+        self.git.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
         self.before.setText("Before")
         self.before.setFont(QFont("Ariel", 10))
-
+        self.before.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################   arrangement
         self.clean_main()
 
@@ -169,6 +170,6 @@ class menu_içerik(QWidget):
         self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
 
         if word.lower()==entered_word.lower():
-            self.value.setStyleSheet('color: green;')
+            self.value.setStyleSheet(f'color: {prt._knowword};')
         else:
-            self.value.setStyleSheet('color: black;')
+            self.value.setStyleSheet(f'color: {prt._normalwod};')

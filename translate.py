@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,setings
+import parameters as prt
 
 
 
@@ -27,7 +28,7 @@ class menu_içerik(QWidget):
         ###############################################   meaning of word
         self.meaning = QTextEdit(self)
         self.meaning.setFont(QFont("Ariel", 10))
-        self.meaning.setStyleSheet('background: white;')
+        self.meaning.setStyleSheet(f'background: {prt._texteditcolor};')
         self.meaning.setFocusPolicy(Qt.NoFocus)
 
         ###############################################   this is meaning of word
@@ -38,16 +39,17 @@ class menu_içerik(QWidget):
         ###############################################   enter  the word
         self.url = QLineEdit(self)
         self.url.setFont(QFont("Ariel", 12))
-        self.url.setStyleSheet('background: white;')
+        self.url.setStyleSheet(f'background: {prt._lineeditcolor};')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
         self.git.setText("Translate")
         self.git.setFont(QFont("Ariel", 10))
-
+        self.git.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
         self.before.setText("TR->EN")
         self.before.setFont(QFont("Ariel", 10))
+        self.before.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  fisrt start functions
         self.change()
         ###############################################   arrangement

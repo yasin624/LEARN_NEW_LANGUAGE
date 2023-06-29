@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,setings
+import parameters as prt
 
 
 
@@ -38,19 +39,22 @@ class menu_içerik(QWidget):
         ###############################################   enter  the word
         self.url = QTextEdit(self)
         self.url.setFont(QFont("Ariel", 12))
-        self.url.setStyleSheet('background: white;')
+        self.url.setStyleSheet(f'background: {prt._texteditcolor};')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
         self.git.setText("After")
         self.git.setFont(QFont("Ariel", 10))
+        self.git.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
         self.before.setText("Before")
         self.before.setFont(QFont("Ariel", 10))
+        self.before.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  the button is  for before word
         self.reverse = QPushButton(self)
         self.reverse.setText("reverse")
         self.reverse.setFont(QFont("Ariel", 10))
+        self.reverse.setStyleSheet(f'background: {prt._buttoncolor};')
 
         ###############################################   arrangement
         self.clean_main()
@@ -167,7 +171,7 @@ class menu_içerik(QWidget):
             else:
                 try:
                     if i.lower()==entered_word[next].lower():
-                        write_word+=f"<span style='color:green;'>{i}</span> "
+                        write_word+=f"<span style='color:{prt._knowword};'>{i}</span> "
                         print("burada 1")
 
                     elif entered_word[next].lower() in word and entered_word!="":
@@ -175,9 +179,9 @@ class menu_içerik(QWidget):
                         write_word+=f"<span style='color:blue;'>{i}</span> "
                     else:
                         print("burada 2",entered_word[next].lower())
-                        write_word+=f"<span style='color:black;'>{i}</span> "
+                        write_word+=f"<span style='color:{prt._normalwod};'>{i}</span> "
                 except:
                     print("burada 3")
-                    write_word+=f"<span style='color:black;'>{i}</span> "
+                    write_word+=f"<span style='color:{prt._normalwod};'>{i}</span> "
             next+=1
         self.value.setText(write_word)

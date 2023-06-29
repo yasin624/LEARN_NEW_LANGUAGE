@@ -2,13 +2,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,setings
+import parameters as prt
 
 
 
 class ADD_WORLD(QWidget):
     def __init__(self):
         super().__init__()
-        self.obj_line_background="white"
         self.etiketler()
 
     def duzen(self,obje,between=[1,3,1],*kwargs):
@@ -31,7 +31,7 @@ class ADD_WORLD(QWidget):
 
         self.new_v = QLineEdit(self)
         self.new_v.setFont(QFont("Ariel", 12))
-        self.new_v.setStyleSheet(f'background: {self.obj_line_background};')
+        self.new_v.setStyleSheet(f'background: {prt._lineeditcolor};')
         ###############################################   saves meaning of new word
         self.meaning = QLabel(self)
         self.meaning.setText("Meaning")
@@ -40,7 +40,7 @@ class ADD_WORLD(QWidget):
 
         self.meaning_v = QLineEdit(self)
         self.meaning_v.setFont(QFont("Ariel", 12))
-        self.meaning_v.setStyleSheet(f'background: {self.obj_line_background};')
+        self.meaning_v.setStyleSheet(f'background: {prt._lineeditcolor};')
         ###############################################   saves example of new word
         self.example = QLabel(self)
         self.example.setText("example  ")
@@ -49,7 +49,7 @@ class ADD_WORLD(QWidget):
 
         self.example_v = QTextEdit (self)
         self.example_v.setFont(QFont("Ariel", 12))
-        self.example_v.setStyleSheet(f'background: {self.obj_line_background};')
+        self.example_v.setStyleSheet(f'background: {prt._texteditcolor};')
         ###############################################   saves meaning of example of new word
         self.example_M = QLabel(self)
         self.example_M.setText("example-M")
@@ -58,17 +58,19 @@ class ADD_WORLD(QWidget):
 
         self.example_M_v = QTextEdit (self)
         self.example_M_v.setFont(QFont("Ariel", 12))
-        self.example_M_v.setStyleSheet(f'background: {self.obj_line_background};')
+        self.example_M_v.setStyleSheet(f'background: {prt._texteditcolor};')
         ###############################################   the button dowloand files
         self.save = QPushButton(self)
         self.save.setText("SAVE")
         self.save.setFont(QFont("Ariel", 10))
+        self.save.setStyleSheet(f'background: {prt._buttoncolor};')
 
         ###############################################  the button for world control
 
         self.DEL = QPushButton(self)
         self.DEL.setText("DEL")
         self.DEL.setFont(QFont("Ariel", 10))
+        self.DEL.setStyleSheet(f'background: {prt._buttoncolor};')
 
         ###############################################   arrangement
         v = QVBoxLayout()

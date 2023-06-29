@@ -3,63 +3,94 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys
-
+import parameters as prt
+import importlib
 
 
 
 
 
 class menu_içerik(QMainWindow):
-    def __init__(self,sleep,main_menu):
+    def __init__(self,main_menu,sleep,hard=False,reverse=False):
         super().__init__()
 
         #########################################  main setting
-        self.start_parametrs(sleep)
+        self.start_parametrs([int(i) for i in sleep.split(":")],hard,reverse)
 
         self.word_list=self.word_list_upload()
-        self.now_word=0
+        self.now_word=prt._word_local
+        self.hard=hard
         self.main_menu=main_menu
         self.show_word=True
         self.Qmenu_bar()
         self.etiketler()
     def show_mainmanu(self):
+        self.savelocal()
         self.main_menu.show()
-        self.timer.stop()
-        self.close()
 
     def Qmenu_bar(self):
         self.menubar=self.menuBar()
         # İlk QMenu örneği
         file_menu = self.menubar.addMenu('File')  # 'File' adında bir QMenu oluştur
+        file_menu.setStyleSheet('color:black;')
 
         new_action = QAction('MainMenu', self)  # QAction oluştur
         file_menu.addAction(new_action)  # QAction'ı QMenu'ya ekle
         new_action.triggered.connect(self.show_mainmanu)
         self.setMenuBar(self.menubar)
-    def start_parametrs(self,sleep):
+    def start_parametrs(self,sleep,hard,reverse):
+        importlib.reload(prt)
         self.setWindowTitle("LOCK LEARNİNG ")
         self.setWindowIcon(QIcon("logo.ico"))
-        self.setStyleSheet("background-color:#516BEB;")
-        self.setMaximumSize(500,200)
-        self.setMinimumSize(500,200)
+        self.setStyleSheet(f"background-color:{prt._background};")
+        self.setMaximumSize(500,210)
+        self.setMinimumSize(500,210)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setGeometry(1420,0,500,200)
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint |  Qt.WindowStaysOnTopHint)
+        if reverse:
+            pass
+        else:
+            pass
+
+        if hard:
+            self.close_button("Hard")
+        else:
+            self.wrong=0
+            self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint |  Qt.WindowStaysOnTopHint)
         self.close_button(False)
-        self.wrong=0
+
         self.objects=[]
         self.focus_obje=0
         self.timer = QTimer(self)
-        self.setSleep=1000*sleep
+        self.setSleep=(3600000*sleep[0])+(60000*sleep[1])+(1000*sleep[2])
     def window_show(self):
-        self.close_button(False)
-        self.wrong=0
+
+        if self.hard:
+            self.close_button("Hard")
+        else:
+            self.close_button("False")
+            self.wrong=0
         self.timer.stop()
         self.show()
+    def savelocal(self):
+        with open("parameters.py","r+") as file:
+            icerik=file.read()
+            index=icerik.index("_word_local=")
 
+            for i in range (10):
+
+                if icerik[index+len("_word_local=")+i]=="\n":
+                    #print(icerik[index+len("_word_local="):index+len("_word_local=")+i],f"{icerik[index:index+len('_word_local=')]}{self.now_word}")
+                    icerik=icerik.replace(icerik[index:index+len("_word_local=")+i],f"{icerik[index:index+len('_word_local=')]}{self.now_word}")
+
+            file.seek(0)
+            file.truncate()
+            file.write(icerik)
     def closeEvent(self, event):
         event.ignore() # pencereyi kapatma
         if event.type() == QEvent.Close:
+            self.after_word()
+            self.savelocal()
             self.hide() # pencereyi gizle
              # bir zamanlayıcı oluştur
 
@@ -75,19 +106,21 @@ class menu_içerik(QMainWindow):
         ###############################################   word
         self.yazı = QLabel(self)
         self.yazı.setText(word.split(":")[0])
-        self.yazı.setFont(QFont("BOLD", 15))
+        self.yazı.setFont(QFont("BOLD", 13))
+        self.yazı.setAlignment(Qt.AlignCenter)
+
         ###############################################   meaning of word
         self.meaning = QTextEdit(self)
         self.meaning.setText(word.split("(")[1])
         self.meaning.setFont(QFont("Ariel", 10))
-        self.meaning.setStyleSheet('background: white;')
+        self.meaning.setStyleSheet(f'background: {prt._texteditcolor};')
         self.meaning.setFocusPolicy(Qt.NoFocus)
         self.meaning.setMaximumSize(190,80)
         self.meaning.setMinimumSize(190,80)
         ###############################################   enter  the word
         self.url = QLineEdit(self)
-        self.url.setFont(QFont("Ariel", 12))
-        self.url.setStyleSheet('background: white;')
+        self.url.setFont(QFont("Ariel", 10))
+        self.url.setStyleSheet(f'background:{prt._lineeditcolor};')
         self.url.setMaximumSize(190,30)
         self.objects.append(self.url)
 
@@ -120,6 +153,7 @@ class menu_içerik(QMainWindow):
         self.git = QPushButton(self)
         self.git.setText("Show")
         self.git.setFont(QFont("Ariel", 10))
+        self.git.setStyleSheet(f'background:{prt._buttoncolor};')
         self.objects.append(self.git)
         ###############################################   the button is  for next word
 
@@ -127,7 +161,7 @@ class menu_içerik(QMainWindow):
         ###############################################  the button is  for before word
         self.before = QPushButton(self)
         self.before.setText("I don't")
-
+        self.before.setStyleSheet(f'background:{prt._buttoncolor};')
         self.before.setFont(QFont("Ariel", 10))
 
 
@@ -142,6 +176,10 @@ class menu_içerik(QMainWindow):
         return H
 
     def etiketler(self):
+        self.status=QStatusBar()
+        self.setStatusBar(self.status)
+        self.status.addWidget(QLabel(f"     Tüm hakları saklıdır © 2020 | yalcınyazılımcılık  {' '*60}"))
+
 
         word=self.word_list[self.now_word]
 
@@ -220,16 +258,17 @@ class menu_içerik(QMainWindow):
         self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
 
         if word.lower()==entered_word.lower():
-            self.value.setStyleSheet('color: green;')
-            self.close_button(True)
+            self.value.setStyleSheet('color: #FFA500;')
+            self.close_button("True")
 
         else:
             self.value.setStyleSheet('color: black;')
-            if self.wrong==5:
-                self.wrong=0
-                self.close_button(True)
-            else:
-                self.wrong+=1
+            if not self.hard:
+                if self.wrong==5:
+                        self.wrong=0
+                        self.close_button("True")
+                else:
+                        self.wrong+=1
     def keyPressEvent(self, event):
         if event.key() == 16777220:
             self.git.click()
@@ -246,9 +285,11 @@ class menu_içerik(QMainWindow):
             pass
     def close_button(self,evet):
 
-        if evet:
-            self.setWindowFlag (Qt.WindowCloseButtonHint, True)
+        if evet=="True":
+            self.setWindowFlags(Qt.Window)
             self.show()
+        elif evet=="Hard":
+            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         else:
             self.setWindowFlag (Qt.WindowCloseButtonHint, False)
 
