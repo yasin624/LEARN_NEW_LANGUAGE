@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys,os,main_menu,setings,random,add_word,sentence,translate
-
+from LOCK import menu_içerik
 
 
 class setup(QMainWindow):
@@ -101,6 +101,15 @@ class setup(QMainWindow):
             self.tablo.setCurrentIndex(2)
         elif dene.text() == "Dowland files":
             self.tablo.setCurrentIndex(1)
+
+    def closeEvent(self, event):
+        if event.type() == QEvent.Close:
+            global lock
+            lock=menu_içerik(self.yol_k.sleep_t.value(),self)
+
+            self.close()
+            lock.show()
+
 
 
 app=QApplication(sys.argv)
