@@ -11,16 +11,16 @@ import parameters as prt
 
 
 class menu_içerik(QWidget):
-    def __init__(self):
+    def __init__(self,word_src=prt._main_word_list):
         super().__init__()
 
 
-        self.word_list=self.word_list_upload()
+        self.word_list=self.word_list_upload(word_src)
         self.now_word=0
         self.show_word=True
         self.etiketler()
 
-    def word_list_upload(self,src="word_library.dbs"):
+    def word_list_upload(self,src=prt._main_word_list):
         with open(src,"r",encoding="utf-8")as file:
             words=file.read().split("\n")
         return words[:-1]
@@ -32,6 +32,7 @@ class menu_içerik(QWidget):
         self.yazı = QLabel(self)
         self.yazı.setText(word.split(":")[0])
         self.yazı.setFont(QFont("BOLD", 20))
+        self.yazı.setFocus()
         ###############################################   meaning of word
         self.meaning = QTextEdit(self)
         self.meaning.setText(word.split("(")[1])
@@ -118,7 +119,9 @@ class menu_içerik(QWidget):
         self.before.clicked.connect(self.before_word)
 
         self.setLayout(v)
-
+    def keyPressEvent(self, event):
+        if event.key() == 16777220:
+            self.git.click()
     def after_word(self):
         if self.show_word:
             word=self.word_list[self.now_word] #.split(":")[1]

@@ -123,19 +123,23 @@ class ADD_WORLD(QWidget):
         self.DEL.clicked.connect(self.delete)
 
         self.setLayout(v)
+    def keyPressEvent(self, event):
+        if event.key() == 16777220:
+            self.save.click()
     def delete(self):
         self.new_v.clear()
         self.meaning_v.clear()
         self.example_v.clear()
         self.example_M_v.clear()
-    def word_save(self):
+    def word_save(self,word_src=prt._dont_know_word_list):
         word=self.new_v.text()+":"+self.meaning_v.text()+"("+\
              self.example_v.toPlainText()+":"+self.example_M_v.toPlainText()+")"+"\n"
-
         self.delete()
-
-        with open("word_library.dbs","a+") as file:
+        print(type(word))
+        with open(word_src,"a+",encoding="utf-8") as file:
+            print("BURADA 1")
             file.write(word.lower())
+        print("BURADA 2")
 
 
 

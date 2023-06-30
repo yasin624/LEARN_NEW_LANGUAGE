@@ -11,16 +11,16 @@ import parameters as prt
 
 
 class menu_içerik(QWidget):
-    def __init__(self):
+    def __init__(self,word_src=prt._main_word_list):
         super().__init__()
 
-        self.word_list=self.word_list_upload()
+        self.word_list=self.word_list_upload(word_src)
         self.now_word=0
         self.word_revers=True
         self.show_word=True
         self.etiketler()
 
-    def word_list_upload(self,src="word_library.dbs"):
+    def word_list_upload(self,src=prt._main_word_list):
         with open(src,"r",encoding="utf-8")as file:
             words=file.read().split("\n")
         return words[:-1]
@@ -29,20 +29,20 @@ class menu_içerik(QWidget):
 
         ###############################################   word
         self.yazı = QLabel(self)
-        self.yazı.setFont(QFont("BOLD", 20))
+        self.yazı.setFont(QFont("BOLD", 18))
         word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0]
         self.yazı.setText(word)
         ###############################################   this is meaning of word
         self.value = QLabel(self)
         self.value.setText("")
-        self.value.setFont(QFont("BOLD", 20))
+        self.value.setFont(QFont("BOLD", 18))
         ###############################################   enter  the word
         self.url = QTextEdit(self)
         self.url.setFont(QFont("Ariel", 12))
         self.url.setStyleSheet(f'background: {prt._texteditcolor};')
         ###############################################   the button is  for next word
         self.git = QPushButton(self)
-        self.git.setText("After")
+        self.git.setText("Show")
         self.git.setFont(QFont("Ariel", 10))
         self.git.setStyleSheet(f'background: {prt._buttoncolor};')
         ###############################################  the button is  for before word
@@ -111,29 +111,52 @@ class menu_içerik(QWidget):
         self.reverse.clicked.connect(self.tr_en_reverse)
 
         self.setLayout(v)
+    def keyPressEvent(self, event):
+        if event.key() == 16777220:
+            self.git.click()
     def tr_en_reverse(self):
         self.word_revers=not self.word_revers
         self.after_word("print")
     def after_word(self,mode=None):
         if mode=="print":
             word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
-            self.yazı.setText(word)
+            word=word.split(" ")
+            if len(word)>4:
+                haft=int(len(word)/1.5)
+                part1=" ".join(word[:haft])
+                part2=" ".join(word[haft:])
+                text="<br>".join([part1,part2])
+            else:
+                text=" ".join(word)
+            self.yazı.setText(text)
+
         elif self.show_word:
             self.control_world(self.word_list[self.now_word],self.url.toPlainText())
+            self.git.setText("After")
             self.show_word=False
 
         else:
+            self.git.setText("Show")
             try:
                 self.now_word+=1
             except:
                 self.now_word=0
             word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
-            self.yazı.setText(word)
+            word=word.split(" ")
+            if len(word)>4:
+                haft=int(len(word)/1.5)
+                part1=" ".join(word[:haft])
+                part2=" ".join(word[haft:])
+                text="<br>".join([part1,part2])
+            else:
+                text=" ".join(word)
+            self.yazı.setText(text)
             self.clean_main()
     def before_word(self):
 
         if self.show_word:
             word=self.word_list[self.now_word] #.split(":")[1]
+
             self.control_world(word,self.url.toPlainText())
 
 
@@ -145,7 +168,16 @@ class menu_içerik(QWidget):
             except:
                 self.now_word=0
             word=self.word_list[self.now_word].split("(")[1].replace(")","").split(":")[0 if self.word_revers else 1]
-            self.yazı.setText(word)
+            word=word.split(" ")
+            if len(word)>4:
+                haft=int(len(word)/1.5)
+                part1=" ".join(word[:haft])
+                part2=" ".join(word[haft:])
+                text="<br>".join([part1,part2])
+            else:
+                text=" ".join(word)
+
+            self.yazı.setText(text)
             self.clean_main()
 
 
@@ -159,10 +191,7 @@ class menu_içerik(QWidget):
     def control_world(self,word,entered_word):
         word=word.split("(")[1].replace(")","").split(":")[1 if self.word_revers else 0].split(" ")
         entered_word=entered_word.split(" ")
-        print("#"*30)
-        print(word)
-        print(entered_word)
-        write_word=""
+        write_word=[]
         next=0
         for i in word:
             if i=="":
@@ -171,17 +200,21 @@ class menu_içerik(QWidget):
             else:
                 try:
                     if i.lower()==entered_word[next].lower():
-                        write_word+=f"<span style='color:{prt._knowword};'>{i}</span> "
-                        print("burada 1")
+                        write_word.append(f"<span style='color:{prt._knowword};'>{i}</span> ")
 
                     elif entered_word[next].lower() in word and entered_word!="":
-                        print("burada 4",entered_word[next].lower())
-                        write_word+=f"<span style='color:blue;'>{i}</span> "
+                        write_word.append(f"<span style='color:blue;'>{i}</span> ")
                     else:
-                        print("burada 2",entered_word[next].lower())
-                        write_word+=f"<span style='color:{prt._normalwod};'>{i}</span> "
+                        write_word.append(f"<span style='color:{prt._normalwod};'>{i}</span> ")
                 except:
-                    print("burada 3")
-                    write_word+=f"<span style='color:{prt._normalwod};'>{i}</span> "
+                    write_word.append(f"<span style='color:{prt._normalwod};'>{i}</span> ")
             next+=1
-        self.value.setText(write_word)
+
+        if len(write_word)>4:
+            haft=int(len(write_word)/1.5)
+            part1=" ".join(write_word[:haft])
+            part2=" ".join(write_word[haft:])
+            text="<br>".join([part1,part2])
+        else:
+            text=" ".join(write_word)
+        self.value.setText(text)

@@ -11,21 +11,22 @@ import importlib
 
 
 class menu_içerik(QMainWindow):
-    def __init__(self,main_menu,sleep,hard=False,reverse=False):
+    def __init__(self,main_menu,sleep,hard=False,reverse=False,word_src=prt._activ_word):
         super().__init__()
 
         #########################################  main setting
-        self.start_parametrs([int(i) for i in sleep.split(":")],hard,reverse)
+        self.start_parametrs([int(i) for i in sleep.split(":")],hard)
 
-        self.word_list=self.word_list_upload()
+        self.word_list=self.word_list_upload(word_src)
         self.now_word=prt._word_local
         self.hard=hard
+        self.reverse=reverse
         self.main_menu=main_menu
         self.show_word=True
         self.Qmenu_bar()
         self.etiketler()
     def show_mainmanu(self):
-        self.savelocal()
+        self.savelocal(change=self.now_word)
         self.main_menu.show()
 
     def Qmenu_bar(self):
@@ -38,7 +39,7 @@ class menu_içerik(QMainWindow):
         file_menu.addAction(new_action)  # QAction'ı QMenu'ya ekle
         new_action.triggered.connect(self.show_mainmanu)
         self.setMenuBar(self.menubar)
-    def start_parametrs(self,sleep,hard,reverse):
+    def start_parametrs(self,sleep,hard):
         importlib.reload(prt)
         self.setWindowTitle("LOCK LEARNİNG ")
         self.setWindowIcon(QIcon("logo.ico"))
@@ -47,17 +48,12 @@ class menu_içerik(QMainWindow):
         self.setMinimumSize(500,210)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setGeometry(1420,0,500,200)
-        if reverse:
-            pass
-        else:
-            pass
-
         if hard:
+            self.setGeometry(700,400,500,210)
             self.close_button("Hard")
         else:
             self.wrong=0
-            self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint |  Qt.WindowStaysOnTopHint)
-        self.close_button(False)
+            self.close_button("False")
 
         self.objects=[]
         self.focus_obje=0
@@ -72,46 +68,45 @@ class menu_içerik(QMainWindow):
             self.wrong=0
         self.timer.stop()
         self.show()
-    def savelocal(self):
+    def savelocal(self,find="_word_local=",change=0):
         with open("parameters.py","r+") as file:
             icerik=file.read()
-            index=icerik.index("_word_local=")
+            index=icerik.index(find)
 
-            for i in range (10):
-
-                if icerik[index+len("_word_local=")+i]=="\n":
-                    #print(icerik[index+len("_word_local="):index+len("_word_local=")+i],f"{icerik[index:index+len('_word_local=')]}{self.now_word}")
-                    icerik=icerik.replace(icerik[index:index+len("_word_local=")+i],f"{icerik[index:index+len('_word_local=')]}{self.now_word}")
-
+            for i in range (100):
+                if icerik[index+len(find)+i]=="\n":
+                    #print("ayrılan : ",icerik[index+len("_word_local="):index+len("_word_local=")+i],f"{icerik[index:index+len('_word_local=')]}{self.now_word}")
+                    icerik=icerik.replace(icerik[index:index+len(find)+i],f"{icerik[index:index+len(find)]}{change}")
+                    break
             file.seek(0)
             file.truncate()
             file.write(icerik)
     def closeEvent(self, event):
         event.ignore() # pencereyi kapatma
         if event.type() == QEvent.Close:
+            self.savelocal(change=self.now_word)
             self.after_word()
-            self.savelocal()
             self.hide() # pencereyi gizle
              # bir zamanlayıcı oluştur
 
             self.timer.timeout.connect(self.window_show) # zamanlayıcı bittiğinde pencereyi göster
             self.timer.start(self.setSleep) # zamanlayıcıyı 120000 milisaniye (2 dakika) olarak başlat
 
-    def word_list_upload(self,src="word_library.dbs"):
-        with open(src,"r",encoding="utf-8")as file:
+    def word_list_upload(self,src=prt._activ_word):
+        with open(src,"r",encoding="utf-8") as file:
             words=file.read().split("\n")
         return words[:-1]
 
     def Layout_1(self,word):
         ###############################################   word
         self.yazı = QLabel(self)
-        self.yazı.setText(word.split(":")[0])
+        self.yazı.setText(word.split(":")[1].split("(")[0] if self.reverse else word.split(":")[0])
         self.yazı.setFont(QFont("BOLD", 13))
         self.yazı.setAlignment(Qt.AlignCenter)
 
         ###############################################   meaning of word
         self.meaning = QTextEdit(self)
-        self.meaning.setText(word.split("(")[1])
+        self.meaning.setText(word.split("(")[0] if self.reverse else word.split("(")[1])
         self.meaning.setFont(QFont("Ariel", 10))
         self.meaning.setStyleSheet(f'background: {prt._texteditcolor};')
         self.meaning.setFocusPolicy(Qt.NoFocus)
@@ -140,6 +135,7 @@ class menu_içerik(QMainWindow):
         self.value.setText("")
         self.value.setFont(QFont("BOLD", 20))
         self.value.setFocusPolicy(Qt.NoFocus)
+        self.value.setAlignment(Qt.AlignTop)
 
         H = QVBoxLayout()
 
@@ -226,11 +222,21 @@ class menu_içerik(QMainWindow):
             self.git.setText("Show")
             try:
                 self.now_word+=1
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
+                text=self.word_list[self.now_word].split(":")
+                text=text[1].split("(")[0] if self.reverse else text[0]
+                self.yazı.setFont(QFont("BOLD",13-len(text.split(","))))
+                self.yazı.setText(text)
             except:
                 self.now_word=0
-                self.word_list=self.word_list_upload()
-                self.yazı.setText(self.word_list[self.now_word].split(":")[0])
+                self.word_list=self.word_list_upload(prt._dont_know_word_list)
+
+                self.savelocal("_activ_word=","_dont_know_word_list")
+                self.savelocal(change=self.now_word)
+
+                text=self.word_list[self.now_word].split(":")
+                text=text[1].split("(")[1] if self.reverse else text[0]
+                self.yazı.setFont(QFont("BOLD",13-len(text.split(","))))
+                self.yazı.setText(text)
 
             self.clean_main()
     def before_word(self):
@@ -249,26 +255,59 @@ class menu_içerik(QMainWindow):
         self.meaning.clear()
         self.show_word=True
 
-    def control_world(self,word,entered_word):
-        text=word.split("(")[1].replace(")","")
-
-        word=word.split("(")[0].split(":")[1].replace(" ","")
-
-        self.value.setText(word)
-        self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
-
-        if word.lower()==entered_word.lower():
-            self.value.setStyleSheet('color: #FFA500;')
-            self.close_button("True")
-
+    def control_world(self,translater,entered_word):
+        text=translater.split("(")[1].replace(")","")
+        if self.reverse:
+            word=translater.split("(")[0].split(":")[0].replace(" ","")
+            size=int(45/len(text.split(":")[1].split(" ")))
+            size=8 if size>8 else size
+            self.meaning.setFont(QFont("Ariel", 4 if size<4 else size))
+            self.meaning.setText(" "+text.split(":")[1]+"\n\n"+text.split(":")[0])
         else:
-            self.value.setStyleSheet('color: black;')
-            if not self.hard:
-                if self.wrong==5:
+            word=translater.split("(")[0].split(":")[1].replace(" ","")
+            size=int(45/len(text.split(":")[1].split(" ")))
+            size=8 if size>8 else size
+            self.meaning.setFont(QFont("Ariel", 4 if size<4 else size))
+            self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
+
+        new_word=[]
+        gec=True
+        know=False
+        for i in word.split(","):
+            if i.lower()==entered_word.lower():
+                new_word.append(f"<span style='color:#FFA500;'>{i}</span> ")
+                self.close_button("True")
+                know=True
+            else:
+                new_word.append(f"<span style='color:black;'>{i}</span> ")
+                if not self.hard:
+                    if self.wrong==5:
                         self.wrong=0
                         self.close_button("True")
-                else:
-                        self.wrong+=1
+                    else:
+                        if gec:
+                            self.wrong+=1
+                            gec=False
+        if  know:
+            self.notknow_control(translater,True)
+        else:
+            self.notknow_control(translater,False)
+
+        self.value.setAlignment(Qt.AlignTop)
+        self.value.setFont(QFont("BOLD",15-len(text.split(","))))
+        self.value.setText("<br>".join(new_word))
+
+    def notknow_control(self,translater,know):
+        with open(prt._dont_know_word_list,"r+",encoding="utf-8") as file:
+            word_list=file.read().split("\n")
+            if (translater not in  word_list) and (not know) :
+                file.write(translater+"\n")
+            elif (translater  in  word_list) and know:
+                word_list.remove(translater)
+                file.seek(0)
+                file.truncate()
+                file.write("\n".join(word_list))
+
     def keyPressEvent(self, event):
         if event.key() == 16777220:
             self.git.click()
@@ -290,7 +329,8 @@ class menu_içerik(QMainWindow):
             self.show()
         elif evet=="Hard":
             self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        else:
+        elif evet=="False":
+            self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint |  Qt.WindowStaysOnTopHint)
             self.setWindowFlag (Qt.WindowCloseButtonHint, False)
 
 
