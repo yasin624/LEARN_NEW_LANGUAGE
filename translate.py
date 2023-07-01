@@ -132,29 +132,38 @@ class menu_içerik(QWidget):
         if self.url.text()=="":
             return None
 
-
+        stop=False
         for word in words:
             if self.translate_type=="EN":
                 trans=word.split("(")[0].split(":")
-                if entered_word.lower()==trans[0].lower():
-                    text=word.split("(")[1].replace(")","")
-                    self.value.setText(trans[1])
-                    self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
-                    break
-                else:
-                    self.value.setText("wrong word")
+                for i in trans[0].split(","):
+
+                    if entered_word.lower()==i.lower():
+                        text=word.split("(")[1].replace(")","")
+                        self.value.setText(trans[1])
+                        self.meaning.setText(" "+text.split(":")[0]+"\n\n"+text.split(":")[1])
+                        stop=True
+                        break
+                    else:
+
+                        self.value.setText("wrong word")
 
             elif self.translate_type=="TR":
                 trans=word.split("(")[0].split(":")
-                if entered_word.lower()==trans[1].replace(" ","").lower():
-                    text=word.split("(")[1].replace(")","")
-                    self.value.setText(trans[0])
-                    self.meaning.setText(" "+text.split(":")[1]+"\n\n"+text.split(":")[0])
-                    break
-                else:
-                    self.value.setText("hatalı kelime")
+                for i in trans[1].split(","):
+                    if entered_word.lower()==i.replace(" ","").lower():
+                        text=word.split("(")[1].replace(")","")
+                        self.value.setText(trans[0])
+                        self.meaning.setText(" "+text.split(":")[1]+"\n\n"+text.split(":")[0])
+                        stop=True
+                        break
+                    else:
+                        self.value.setText("hatalı kelime")
             else:
                 print(" dil algılanmadı")
+
+            if stop:
+                break
 
 
 

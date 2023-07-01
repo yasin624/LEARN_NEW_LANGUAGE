@@ -131,15 +131,12 @@ class ADD_WORLD(QWidget):
         self.meaning_v.clear()
         self.example_v.clear()
         self.example_M_v.clear()
-    def word_save(self,word_src=prt._dont_know_word_list):
+    def word_save(self):
         word=self.new_v.text()+":"+self.meaning_v.text()+"("+\
              self.example_v.toPlainText()+":"+self.example_M_v.toPlainText()+")"+"\n"
         self.delete()
-        print(type(word))
-        with open(word_src,"a+",encoding="utf-8") as file:
-            print("BURADA 1")
+        with open(prt._dont_know_word_list,"a+",encoding="utf-8") as file:
             file.write(word.lower())
-        print("BURADA 2")
 
 
 
