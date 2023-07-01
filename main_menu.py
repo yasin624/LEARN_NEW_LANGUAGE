@@ -127,7 +127,10 @@ class menu_içerik(QWidget):
             word=self.word_list[self.now_word] #.split(":")[1]
             self.control_world(word,self.url.text())
             self.show_word=False
+            self.git.setText("After")
         else:
+
+            self.git.setText("show")
             try:
                 self.now_word+=1
                 self.yazı.setText(self.word_list[self.now_word].split(":")[0])
@@ -141,10 +144,10 @@ class menu_içerik(QWidget):
         if self.show_word:
             word=self.word_list[self.now_word] #.split(":")[1]
             self.control_world(word,self.url.text())
-
-
+            self.git.setText("After")
             self.show_word=False
         else:
+            self.git.setText("show")
             try:
                 self.now_word-=1
                 self.yazı.setText(self.word_list[self.now_word].split(":")[0])

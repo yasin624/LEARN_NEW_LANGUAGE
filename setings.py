@@ -62,6 +62,36 @@ class yol(QWidget):
         H.addWidget(self.reverse)
         H.addStretch(1)
         return H
+    def Quit(self,text):
+        self.exit=QPushButton(self)
+        self.exit.setStyleSheet(f'background: {prt._buttoncolor};')
+        self.exit.setText("EXİT")
+
+
+        label=QLabel(f"<font size=4><b> {text} :</b></font>")
+        label.setFont(QFont("BOLD", 10))
+
+        H = QHBoxLayout()
+        H.addWidget(label)
+        H.addStretch(80)
+        H.addWidget(self.exit)
+        H.addStretch(1)
+        return H
+    def Reset(self,text):
+        self.reset=QPushButton(self)
+        self.reset.setStyleSheet(f'background: {prt._buttoncolor};')
+        self.reset.setText("Reset")
+
+
+        label=QLabel(f"<font size=4><b> {text} :</b></font>")
+        label.setFont(QFont("BOLD", 10))
+
+        H = QHBoxLayout()
+        H.addWidget(label)
+        H.addStretch(80)
+        H.addWidget(self.reset)
+        H.addStretch(1)
+        return H
     ##################################################################### these codes make QSlider and QSpinBox , And append to menu ,next return this object
     def sleep_time(self,text):
         ###############################################  # hsv hue (renk aralığı) min ##### this make the min  huve value of hsv
@@ -118,7 +148,8 @@ class yol(QWidget):
 
         hard=self.hard_mod("Hard_Mode")
         reverse=self.reverse_mod("Reverse take words")
-
+        qut=self.Quit("Exit All Setup ")
+        reset=self.Reset("Reset All Setup")
 
 
         v = QVBoxLayout()
@@ -133,6 +164,10 @@ class yol(QWidget):
         v.addLayout(hard)
         v.addStretch(1)
         v.addLayout(reverse)
+        v.addStretch(50)
+        v.addLayout(reset)
+        v.addStretch(1)
+        v.addLayout(qut)
         self.setLayout(v)
 
     def konum(self):

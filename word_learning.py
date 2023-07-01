@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 import sys,os,main_menu,setings,random,add_word,sentence,translate
 from LOCK import menu_içerik
 import parameters as prt
-
+import importlib
 class setup(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -96,6 +96,8 @@ class setup(QMainWindow):
         self.setCentralWidget(self.tablo)
         ################################################################### file download location
         #self.dosya.triggered.connect(self.konum_belirle)
+        self.yol_k.exit.clicked.connect(self.Setup_Exit)
+        self.yol_k.reset.clicked.connect(self.Setup_Reset)
 
 
     def tab1(self):
@@ -139,8 +141,36 @@ class setup(QMainWindow):
             self.close()
             self.lock.show()
 
+    def Setup_Exit(self):
+        sys.exit(app.exec_())
+    def Setup_Reset(self):
+        reset_str="""_main_word_list="main_word_list.dbs"
+_dont_know_word_list="dont_know_word.dbs"
+_activ_word=_main_word_list
 
 
+
+_background="#516BEB"
+_texteditcolor="#8099E1"
+_lineeditcolor="#8099E1"
+_buttoncolor="#8099E1"
+
+
+
+_knowword="#FFA500"
+_normalwod="#000000"
+
+_word_local=0
+_sleep_time=[0,0,5]"""
+        with open("parameters.py","w")as file:
+            file.write(reset_str)
+        with open(prt._dont_know_word_list,"w")as file:
+            file.write("")
+        importlib.reload(setings)
+
+        message_box = QMessageBox()
+        message_box.setText("Basarılı bir şekilde reset atıldı.")
+        message_box.exec_()
 app=QApplication(sys.argv)
 dowland=setup()
 dowland.show()
