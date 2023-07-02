@@ -85,7 +85,7 @@
 <br/><br/>
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
-### **2.1 ) TRANSLATE**
+### **2.3 ) TRANSLATE**
 <hr width="190px"  align="left">
 
 
@@ -100,7 +100,7 @@
 <br/><br/><br/><br/><br/><br/>
 
 
-### **2.1 ) ADD WORD**
+### **2.4 ) ADD WORD**
 <hr width="190px"  align="left">
 
 
@@ -114,7 +114,7 @@
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
-### **2.1 ) SENTTİNG**
+### **2.5 ) SENTTİNG**
 
 <hr width="190px"  align="left">
 
