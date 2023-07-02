@@ -98,6 +98,8 @@
 </div></div>
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <br/><br/><br/><br/><br/><br/>
+
+
 ### **2.1 ) ADD WORD**
 <hr width="190px"  align="left">
 
@@ -112,7 +114,7 @@
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
-### **2.1 ) ADD WORD**
+### **2.1 ) SENTTİNG**
 
 <hr width="190px"  align="left">
 
