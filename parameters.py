@@ -14,5 +14,5 @@ _buttoncolor="#8099E1"
 _knowword="#FFA500"
 _normalwod="#000000"
 
-_word_local=4
+_word_local=19
 _sleep_time=[0,0,5]
